@@ -186,3 +186,86 @@ class IceFireEffect{
     }
 
 };
+
+class PurpleRainEffect{
+    
+  protected:
+
+    int     Size;                   // How many pixels the flame is total
+    int     Cooling;                // Rate the pixels cool off
+    int     Sparks;                 // How many sparks will be attempted each frame
+    int     SparkHeight;            // If created, max height for a spark
+    int     Sparking;               // Probability of a spark each attempt
+    bool    bReversed;              // If reversed, draw from 0 outwards
+    bool    bMirrored;              // If mirrored, split and duplicate the drawing
+
+    byte * prain;
+
+    // when diffusing the fire upwards, these control how much to blend in from the cells below (ie: downward neighbors)
+    // You can tune these coefficients to control how quickly and smoothly the fire spreads
+
+    static const byte BlendSelf = 2;
+    static const byte BlendNeighbor1 = 3;
+    static const byte BlendNeighbor2 = 2;
+    static const byte BlendNeighbor3 = 1;
+    static const byte BlendTotal = (BlendSelf + BlendNeighbor1 + BlendNeighbor2 + BlendNeighbor3);
+
+  public:
+
+    PurpleRainEffect(int size, int cooling = 20, int sparking = 100, int sparks = 3, int sparkHeight = 4, bool breversed = true, bool bmirrored = true)
+      : Size(size),
+        Cooling(cooling),
+        Sparks(sparks),
+        SparkHeight(sparkHeight),
+        Sparking(sparking),
+        bReversed(breversed),
+        bMirrored(bmirrored)
+
+    {
+        if (bMirrored)
+            Size = Size / 2;
+
+        prain = new byte[size] { 0 };
+    }
+
+    virtual ~PurpleRainEffect(){
+
+        delete [] prain;
+    }
+
+    virtual void DrawPurpleRain(){
+
+        // First cool each cell by a little bit
+        for (int i = 0; i < Size; i++)
+            prain[i] = max(0L, prain[i] - random(0, ((Cooling * 10) / Size) + 2));
+        
+        // Next drift heat up and diffuse it a little bit
+        for (int i = 0; i < Size; i++)
+            prain[i] = (prain[i] * BlendSelf + 
+                       prain[(i + 1) % Size] * BlendNeighbor1 +
+                       prain[(i + 2) % Size] * BlendNeighbor2 +
+                       prain[(i + 3) % Size] * BlendNeighbor3)
+                       / BlendTotal;
+
+        // Randomly ignite new sparks down in the flame core
+        for (int i = 0; i < Sparks; i++){
+
+            if (random(255) < Sparking){
+
+                int y = Size - 1 - random(SparkHeight);
+                prain[y] = prain[y] + random(160, 255);
+            }
+        }
+
+        // Finally convert heat to a color
+        for (int i = 0; i < Size; i++){
+
+            CRGB color = PurpleRain(prain[i]);
+            int j = bReversed ? (Size - 1 - i) : i;
+            DrawPixels(j, 1, color);
+            if (bMirrored)
+                DrawPixels(!bReversed ? (2 * Size - 1 - i) : Size + i, 1, color);
+        }
+    }
+
+};

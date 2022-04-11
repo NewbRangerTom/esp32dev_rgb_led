@@ -16,6 +16,7 @@
 //                                                   moved to ledgfx.h: 
 //                                                      #define ARRAYSIZE(x) (sizeof(x) / sizeof(x[0]))
 //                                                      #define TIMES_PER_SECOND(x) EVERY_N_MILLISECONDS(1000 / x)
+//                Apr-11-2022   TW-NewbRanger        Added PurpleRainEffect 
 //
 //---------------------------------------------------------------------------------
 
@@ -24,47 +25,44 @@
 #include <FastLED.h>
 #include "BluetoothSerial.h"
 
-BluetoothSerial ESP_BT;
-
 // For FastLED
 #define NUM_LEDS        144         // number of LEDs - using 60 out of 60
 #define UF_LEDS         72          // number of LEDs for each half of Ukrain Flag
 #define LED_PIN         23
 #define LED_BUILTIN     16          // builtin RGB LED1 Red pin
-CRGB h_LEDs[NUM_LEDS] = {0};        // Frame buffer for FastLED
 
-int h_Brightness = 64;              //  brightness range 0 - 255  !!! CAUTION: setting to 255 could have negative effects if underpowered
-int h_PowerLimit = 1500;            //  900mW Power Limit
-int num_funcs   =  15;
+int h_Brightness      = 64;         //  brightness range 0 - 255  !!! CAUTION: setting to 255 could have negative effects if underpowered
+int h_PowerLimit      = 1500;       //  900mW Power Limit
+const int num_funcs   = 16;
 
-// LED effect headers
+// LED effect headers - User defined headers
+#include "bounce.h"
+#include "comet.h"
+#include "fire.h"
 #include "ledgfx.h"
 #include "marquee.h"
-#include "twinkle.h"
-#include "comet.h"
-#include "bounce.h"
-#include "fire.h"
 #include "static.h"
+#include "twinkle.h"
 
-//  Bouncing Ball Effect
-//
-// (length, count, fade, mirrored)
-// Creating instance of BouncingBallEffect called balls
-BouncingBallEffect balls(NUM_LEDS, 8, 32, true);
-IceFireEffect ice(NUM_LEDS, 15, 100, 3, 4, true, true);           // f-f = end -> 0 : t-f = 0 -> end : f-t = center -> out : t-t = ends -> center
-FireEffect fire(NUM_LEDS, 30, 100, 3, 4, true, true);             // f-f = end -> 0 : t-f = 0 -> end : f-t = center -> out : t-t = ends -> center
+// ----- Class Constructors
 
-void MyIceFire(){
-    FastLED.clear();
-    ice.DrawIceFire();
-    FastLED.show(h_Brightness);
-};
+BouncingBallEffect balls(NUM_LEDS, 8, 32, true);                  // Bouncing Ball Effect (length, count, fade, mirrored)
+IceFireEffect ice(NUM_LEDS, 15, 100, 3, 4, true, true);           // FireEffect, IceFireEffect, and PurpleRainEffect
+FireEffect fire(NUM_LEDS, 15, 100, 3, 4, true, true);             // reversed and bmirrored true/false combinations:
+PurpleRainEffect rain(NUM_LEDS, 15, 100, 3, 4, true, true);       // f-f = end -> 0 : t-f = 0 -> end : f-t = center -> out : t-t = ends -> center
+BluetoothSerial ESP_BT;
+CRGB h_LEDs[NUM_LEDS] = {0};        // Frame buffer for FastLED
 
-void MyFire(){
-    FastLED.clear();
-    fire.DrawFire();
-    FastLED.show(h_Brightness);
-};
+// --- User defined function prototypes -------------------------
+
+void clearLEDs();
+void MarqueeComparison();
+void firstLED();
+void MyIceFire();
+void MyFire();
+void PurpleR();
+
+// -------------------------------------------------
 
 void setup() {
   
@@ -89,14 +87,14 @@ void loop() {
   uint8_t initialHue = 0;
   const uint8_t deltaHue = 16;
   const uint8_t hueDensity = 4;
-  
+
   while (true){
 
   //----------------------------------------------------------------------------------------------------
       // LED strip patern functions
       // uncomment the effect to use
 
-      // EVERY_N_MILLISECONDS(20){ DrawMarqueeComparison(); }  // see annotations in marquee.h for options
+      // MarqueeComparison();                                // see annotations in marquee.h for options
       // DrawComet();
       // DrawCometGfx();
       // DrawComet3();
@@ -109,28 +107,30 @@ void loop() {
       // h_LEDs[0] = CRGB::Red;   // light LED 0
       // lightFullStrip();
       // MyFire();
-      // MyIceFire();
+      MyIceFire();
+      // PurpleR();
       // UkrainFlag();
 
 
     // this system only works for the static (single iteration) functions.
-      char btRead = ESP_BT.read();
+      // char btRead = ESP_BT.read();
       // for (int i = 0; i < num_funcs; i++) {
-        if (btRead == 'a') DrawComet();                                         // dynamic
-        if (btRead == 'b') DrawCometGfx();                                      // dynamic
-        if (btRead == 'c') DrawComet3();                                        // dynamic
-        if (btRead == 'd') balls.Draw();                                        // dynamic
-        if (btRead == 'e') DrawMarquee();                                       // dynamic
-        if (btRead == 'f') DrawPixels(h_LEDs[0], NUM_LEDS, CRGB::Green);        // static
-        if (btRead == 'g') DrawTwinkle();                                       // dynamic
-        if (btRead == 'h') fill_solid(h_LEDs, NUM_LEDS, CRGB::Green);           // static
-        if (btRead == 'i') DrawTwinkleOne();                                    // dynamic
-        if (btRead == 'j') h_LEDs[0] = CRGB::Red;                               // static
-        if (btRead == 'k') lightFullStrip();                                    // static
-        if (btRead == 'l') MyFire();                                            // dynamic
-        if (btRead == 'm') MyIceFire();                                         // dynamic
-        if (btRead == 'n') UkrainFlag();                                        // static
-        if (btRead == 'o') FastLED.clear();                                     // sets all to HIGH / OFF / 0
+        // if (btRead == 'a') DrawComet();                                         // dynamic
+        // if (btRead == 'b') DrawCometGfx();                                      // dynamic
+        // if (btRead == 'c') DrawComet3();                                        // dynamic
+        // if (btRead == 'd') balls.Draw();                                        // dynamic
+        // if (btRead == 'e') DrawMarquee();                                       // dynamic
+        // if (btRead == 'f') DrawPixels(h_LEDs[0], NUM_LEDS, CRGB::Green);        // static
+        // if (btRead == 'g') DrawTwinkle();                                       // dynamic
+        // if (btRead == 'h') fill_solid(h_LEDs, NUM_LEDS, CRGB::Green);           // static
+        // if (btRead == 'i') DrawTwinkleOne();                                    // dynamic
+        // if (btRead == 'j') h_LEDs[0] = CRGB::Red;                               // static
+        // if (btRead == 'k') lightFullStrip();                                    // static
+        // if (btRead == 'l') MyFire();                                            // dynamic
+        // if (btRead == 'm') MyIceFire();                                         // dynamic
+        // if (btRead == 'n') UkrainFlag();                                        // static
+        // if (btRead == 'p') PurpleR();                                           // dynamic
+        // if (btRead == 'o') clearLEDs();                                         // sets all to HIGH / OFF / 0
       // }
 
   //----------------------------------------------------------------------------------------------------
@@ -141,3 +141,35 @@ void loop() {
   }
 
 }
+
+// --- User defined functions -----------------------------------------
+
+void clearLEDs(){
+  FastLED.clear();
+};
+
+void firstLED(){
+  h_LEDs[0] = CRGB::Red;   // light LED 0
+};
+
+void MarqueeComparison(){
+  EVERY_N_MILLISECONDS(20){ DrawMarqueeComparison(); };
+};
+
+void MyIceFire(){
+    FastLED.clear();
+    ice.DrawIceFire();
+    FastLED.show(h_Brightness);
+};
+
+void MyFire(){
+    FastLED.clear();
+    fire.DrawFire();
+    FastLED.show(h_Brightness);
+};
+
+void PurpleR(){
+    FastLED.clear();
+    rain.DrawPurpleRain();
+    FastLED.show(h_Brightness);
+};
