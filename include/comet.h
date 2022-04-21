@@ -11,7 +11,7 @@
 // History:     Sep-28-2020     davepl      Created
 //
 //---------------------------------------------------------------------------
-#pragma once
+// #pragma once
 #include <Arduino.h>
 #define FASTLED_INTERNAL
 #include <FastLED.h>

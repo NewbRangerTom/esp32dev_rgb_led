@@ -17,6 +17,7 @@
 #include <FastLED.h>
 
 #define TWINKLE_SPEED   50      //  value in milliseconds, best results under 100
+#define P_TWINKLE_SPEED 60      //  value in milliseconds, best results under 100
 #define NUM_COLORS      5       //  size of the TwinkleColors array
 
 static const CRGB TwinkleColors [NUM_COLORS] = 
@@ -26,6 +27,15 @@ static const CRGB TwinkleColors [NUM_COLORS] =
     CRGB::Purple,
     CRGB::Green,
     CRGB::Yellow
+};
+
+static const CRGB PurpleColors [NUM_COLORS] =
+{
+    CRGB::DarkBlue,
+    CRGB::Purple,
+    CRGB::BlueViolet,
+    CRGB::Violet,
+    CRGB::DarkViolet
 };
 
 void DrawTwinkle(){
@@ -44,29 +54,45 @@ void DrawTwinkle(){
     delay(TWINKLE_SPEED);
 }
 
-void DrawTwinkleOne()
-{
-    FastLED.clear(false);                                        //  Clear the strip, but don't push put the bits yet
+void DrawPurpleTwinkle(){
 
-    for (int i = 0; i < NUM_LEDS; i++){
+    static int passCount = 0;
+    passCount++;
+
+    //  Every time passCount hits a quarter of the LED total, we reset the strip
+    if (passCount == NUM_LEDS / 3){
+
+        passCount = 0;
+        FastLED.clear(false);                                        //  Clear the strip, but don't push the bits out yet
+    }
+
+    h_LEDs[random(NUM_LEDS)] = PurpleColors[random(NUM_COLORS)];
+    delay(TWINKLE_SPEED);
+}
+
+void DrawTwinkleOg()
+{
+    FastLED.clear(false);                                           //  Clear the strip, but don't push out the bits yet
+
+    for (int i = 0; i < NUM_LEDS / 4; i++){
         h_LEDs[random(NUM_LEDS)] = TwinkleColors[random(NUM_COLORS)];
         FastLED.show(h_Brightness);
         delay(200);
     }
 }
 
-void DrawTwinkleTwo(){
+void DrawTwinkleOgTwo(){
 
     static int passCount = 0;
     passCount++;
 
     //  Every time passCount hits a quarter of the LED total, we reset the strip
-    if (passCount == NUM_LEDS / 4){
+    if (passCount == NUM_LEDS){
 
         passCount = 0;
-        FastLED.clear(false);                                        //  Clear the strip, but don't push put the bits yet
+        FastLED.clear(false);                                        //  Clear the strip, but don't push out the bits yet
     }
 
     h_LEDs[random(NUM_LEDS)] = TwinkleColors[random(NUM_COLORS)];
-    delay(200);
+    // delay(200);
 }
