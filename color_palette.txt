@@ -1,0 +1,94 @@
+ADD the following function prototypes to FastLED colorutils.h below CRGB HeatColor( uint8_t temperature) line 336
+
+    CRGB IceColor( uint8_t temperature);
+
+    CRGB PurpleRain( uint8_t temperature);
+    
+
+ADD the following to FastLED/colorutils.cpp below CRGB HeatColor( uint8_t temperature)
+
+// CRGB IceColor( uint8_t temperature)
+//
+// Approximates a 'black body radiation' spectrum for
+// a given 'cold' level.  This is useful for animations of 'coldfire'.
+// Cold is specified as an arbitrary scale from 0 (cool) to 255 (hot).
+// This is NOT a chromatically correct 'black body radiation'
+// spectrum, but it's surprisingly close, and it's fast and small.
+//
+// On AVR/Arduino, this typically takes around 70 bytes of program memory,
+// versus 768 bytes for a full 256-entry RGB lookup table.
+
+CRGB IceColor( uint8_t temperature)
+{
+    CRGB icecolor;
+
+    // Scale 'cold' down from 0-255 to 0-191,
+    // which can then be easily divided into three
+    // equal 'thirds' of 64 units each.
+    uint8_t t192 = scale8_video( temperature, 191);
+
+    // calculate a value that ramps up from
+    // zero to 255 in each 'third' of the scale.
+    uint8_t coldramp = t192 & 0x3F; // 0..63
+    coldramp <<= 2; // scale up to 0..252
+
+    // now figure out which third of the spectrum we're in:
+    if( t192 & 0x80) {
+        // we're in the hottest third
+        icecolor.r = coldramp; // ramp up red
+        icecolor.g = 191; // full green = 255
+        icecolor.b = 255; // full blue  = 255
+
+    } else if( t192 & 0x40 ) {
+        // we're in the middle third
+        icecolor.r = 0; // no red = 0
+        icecolor.g = 127; // full green = 255
+        icecolor.b = coldramp; // ramp up blue
+
+    } else {
+        // we're in the coolest third
+        icecolor.r = 0; // no red
+        icecolor.g = coldramp; // ramp up green
+        icecolor.b = coldramp; // ramp up blue
+    }
+
+    return icecolor;
+}
+
+
+CRGB PurpleRain( uint8_t temperature)
+{
+    CRGB purplerain;
+
+    // Scale 'cold' down from 0-255 to 0-191,
+    // which can then be easily divided into three
+    // equal 'thirds' of 64 units each.
+    uint8_t t192 = scale8_video( temperature, 191);
+
+    // calculate a value that ramps up from
+    // zero to 255 in each 'third' of the scale.
+    uint8_t coldramp = t192 & 0x3F; // 0..63
+    coldramp <<= 2; // scale up to 0..252
+
+    // now figure out which third of the spectrum we're in:
+    if( t192 & 0x80) {
+        // we're in the hottest third
+        purplerain.r = 255; // ramp up red
+        purplerain.g = 32; // full green = 255
+        purplerain.b = 255; // full blue  = 255
+
+    } else if( t192 & 0x40 ) {
+        // we're in the middle third
+        purplerain.r = coldramp; // no red = 0
+        purplerain.g = 64; // full green = 255
+        purplerain.b = 128; // ramp up blue
+
+    } else {
+        // we're in the coolest third
+        purplerain.r = coldramp; // no red
+        purplerain.g = 0; // ramp up green
+        purplerain.b = coldramp; // ramp up blue
+    }
+
+    return purplerain;
+}

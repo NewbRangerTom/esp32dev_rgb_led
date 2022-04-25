@@ -3,21 +3,23 @@
 // Derived from:  Arduino LED Tutorial - (c) 2020 Dave Plummer, All Rights Reserved.
 //
 //  File:         RGB_LED_esp32dev/main.cpp          Creator(s): Dave Plummer
-//                                                               TW-NewbRanger
+//                                                               TW-NewbRangerTom
 //
 //  Description:
-//    Draw sample effects on an addressable RGB LED strip and prints stats to
-//    the OLED display on a Heltec ESP32 module.
+//    Draw sample effects on an addressable RGB LED strip using
+//    the EZSBC ESP32_ANT_1 Breakout and Developement Board.  https://www.ezsbc.com/product/wifi01u/
 // 
-//  History:      Feb-7-2022    TW-NewbRanger        Copied for personal use and learning
-//                Feb-22-2022   TW-NewbRanger        refactored with EVERY_N_MILLISECONDS
+//  History:      Feb-7-2022    TW-NewbRangerTom        Copied for personal use and learning
+//                Feb-22-2022   TW-NewbRangerTom        refactored with EVERY_N_MILLISECONDS
 //                                                      refactored comet using beat timers
-//                Mar-03-2022   TW-NewbRanger        Removed OLED, refactored for esp32dev board
-//                Apr-07-2022   TW-NewbRanger        Added Bluetooth
-//                                                   moved to ledgfx.h: 
-//                                                      #define ARRAYSIZE(x) (sizeof(x) / sizeof(x[0]))
-//                                                      #define TIMES_PER_SECOND(x) EVERY_N_MILLISECONDS(1000 / x)
-//                Apr-11-2022   TW-NewbRanger        Added PurpleRainEffect
+//                Mar-03-2022   TW-NewbRangerTom        Removed OLED, refactored for esp32dev board
+//                Apr-07-2022   TW-NewbRangerTom        Added Bluetooth
+//                                                      moved to ledgfx.h: 
+//                                                        #define ARRAYSIZE(x) (sizeof(x) / sizeof(x[0]))
+//                                                        #define TIMES_PER_SECOND(x) EVERY_N_MILLISECONDS(1000 / x)
+//                Apr-11-2022   TW-NewbRangerTom        Added PurpleRainEffect
+//                Apr-25-2022   TW-NewbRangerTom        Updated README.md
+//                                                      Added color_palette.txt with code to add to FastLED/colorutils
 // 
 // !!! CAUTION:
 //    1. Some patterns require more power to run properly. Ensure you do not set power limit higher than power supply is rated.
@@ -70,7 +72,6 @@ void firstLED();
 void Marquee();
 void MyFire();
 void MyIceFire();
-void nothingElseMatters();
 void PurpleR();
 
 // -------------------------------------------------
@@ -116,32 +117,32 @@ void loop() {
     // lightFullStrip();
     // MyFire();
     // MyIceFire();
-    PurpleR();
+    // PurpleR();
     // UkrainFlag();
     
-    // if (ESP_BT.available()){
-		// 	byte btRead = ESP_BT.read();
-		// 	switch (btRead){
-		// 		case 0:  clearLEDs(); break;
-    //    case 1:	 DrawPixels(h_LEDs[0], NUM_LEDS, CRGB::Green);  break;
-		// 		case 2:	 fill_solid(h_LEDs, NUM_LEDS, CRGB::Plaid);  break;
-		// 		case 3:	 firstLED();  break;
-		// 		case 4:	 lightFullStrip();  break;
-		// 		case 5:	 UkrainFlag();  break;
-		// 		case 6:	 fill_rainbow(h_LEDs, NUM_LEDS, initialHue += hueDensity, deltaHue);  break;
-		// 		case 7:	 Marquee();  break;
-		// 		case 8:	 balls.Draw();  break;
-		// 		case 9:	 DrawComet();  break;
-		// 		case 10: DrawCometGfx(); break;
-		// 		case 11: DrawComet3(); break;
-		// 		case 12: DrawTwinkle(); break;
-		// 		case 13: DrawPurpleTwinkle(); break;
-		// 		case 14: MyFire(); break;
-		// 		case 15: MyIceFire(); break;
-		// 		case 16: PurpleR(); break;
-		// 		default: nothingElseMatters();
-    //   }
-    // }
+    if (ESP_BT.available()){
+			byte btRead = ESP_BT.read();
+			switch (btRead){
+				case 0:  clearLEDs(); break;
+        case 1:	 DrawPixels(h_LEDs[0], NUM_LEDS, CRGB::Green);  break;
+				case 2:	 fill_solid(h_LEDs, NUM_LEDS, CRGB::Plaid);  break;
+				case 3:	 firstLED();  break;
+				case 4:	 lightFullStrip();  break;
+				case 5:	 UkrainFlag();  break;
+				case 6:	 fill_rainbow(h_LEDs, NUM_LEDS, initialHue += hueDensity, deltaHue);  break;
+				case 7:	 Marquee();  break;
+				case 8:	 balls.Draw();  break;
+				case 9:	 DrawComet();  break;
+				case 10: DrawCometGfx(); break;
+				case 11: DrawComet3(); break;
+				case 12: DrawTwinkle(); break;
+				case 13: DrawPurpleTwinkle(); break;
+				case 14: MyFire(); break;
+				case 15: MyIceFire(); break;
+				case 16: PurpleR(); break;
+				default: nothingElseMatters();
+      }
+    }
 
   //----------------------------------------------------------------------------------------------------
 
@@ -180,17 +181,6 @@ void MyFire(){
     FastLED.clear();
     fire.DrawFire();
     FastLED.show(h_Brightness);
-};
-
-void nothingElseMatters(){
-  h_LEDs[0] = CRGB::Red;     // light LED 0
-  h_LEDs[1] = CRGB::Red;     // light LED 1
-  h_LEDs[2] = CRGB::Yellow;  // light LED 2
-  h_LEDs[3] = CRGB::Yellow;  // light LED 3
-  h_LEDs[4] = CRGB::Green;   // light LED 4
-  h_LEDs[5] = CRGB::Green;   // light LED 5
-  delay(2000);
-  FastLED.clear();
 };
 
 void PurpleR(){

@@ -3,9 +3,10 @@
 // File:         RGB_LED_esp32dev/static.h
 //
 // Description:
-//    Addon to:  NightDriver - (c) 2020 Dave Plummer.  All Rights Reserved.
+//    Static patterns
 //
-// History:      Feb-10-2022     TW - NewbRanger      Created
+// History:      Feb-10-2022     TW - NewbRangerTom      Created
+//               Apr-8-2022      TW - NewbRangerTom      nothingElseMatters() for init confirmation
 //
 //--------------------------------------------------------------------------
 
@@ -33,4 +34,15 @@ void UkrainFlag(){
   }
   FastLED.show(h_Brightness);
 
+};
+
+void nothingElseMatters(){
+  h_LEDs[0] = CRGB::Red;     // light LED 0
+  h_LEDs[1] = CRGB::Red;     // light LED 1
+  h_LEDs[2] = CRGB::Yellow;  // light LED 2
+  h_LEDs[3] = CRGB::Yellow;  // light LED 3
+  h_LEDs[4] = CRGB::Green;   // light LED 4
+  h_LEDs[5] = CRGB::Green;   // light LED 5
+  delay(2000);
+  FastLED.clear();
 };
