@@ -22,6 +22,12 @@
 
 extern CRGB h_LEDs[];
 
+void Bounce(){
+  FastLED.clear();
+  balls.Draw();
+  FastLED.setBrightness(h_Brightness);
+};
+
 static const CRGB ballColors [] =
 {
     CRGB::Green,

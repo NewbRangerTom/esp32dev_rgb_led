@@ -215,3 +215,7 @@ void DrawPixels(float fPos, float count, CRGB color)
     FastLED.leds()[iPos] += ColorFraction(color, remaining);
   }
 }
+
+void fillGreen(){
+  DrawPixels(h_LEDs[0], NUM_LEDS, CRGB::Green);
+}
