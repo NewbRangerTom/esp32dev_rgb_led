@@ -17,10 +17,6 @@
 #include <FastLED.h>
 #include "ledgfx.h"
 
-void Marquee(){
-  EVERY_N_MILLISECONDS(20){ DrawMarquee(); };
-};
-
 void DrawMarquee(){
     
     static byte j = HUE_BLUE;

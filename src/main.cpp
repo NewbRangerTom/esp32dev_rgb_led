@@ -66,6 +66,34 @@ BluetoothSerial ESP_BT;
 
 // --- User defined function(s) or function prototype(s) -------------------------
 
+void Bounce(){
+  FastLED.clear();
+  balls.Draw();
+  FastLED.setBrightness(h_Brightness);
+};
+
+void Marquee(){
+  EVERY_N_MILLISECONDS(20){ DrawMarquee(); };
+};
+
+void MyFire(){
+  FastLED.clear();
+  fire.DrawFire();
+  FastLED.setBrightness(h_Brightness);
+};
+
+void MyIceFire(){
+  FastLED.clear();
+  ice.DrawIceFire();
+  FastLED.setBrightness(h_Brightness);
+};
+
+void PurpleR(){
+  FastLED.clear();
+  rain.DrawPurpleRain();
+  FastLED.setBrightness(h_Brightness);
+};
+
 void Rainbow(){
   fill_rainbow(h_LEDs, NUM_LEDS, initialHue += hueDensity, deltaHue);
 };
@@ -114,7 +142,7 @@ void loop() {
     // firstLED();                            // light LED 0 CRGB::Red
     // lightFullStrip();                      // solid fill color = CRGB::Red
     // MyFire();                              // red palette fire effect
-    // MyIceFire();                           // blue palette fire effect
+    MyIceFire();                           // blue palette fire effect
     // PurpleR();                             // purple palette fire effect
     // UkrainFlag();                          // 
 

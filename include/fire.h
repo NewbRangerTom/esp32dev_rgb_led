@@ -104,12 +104,6 @@ class FireEffect{
 
 };
 
-void MyIceFire(){
-  FastLED.clear();
-  ice.DrawIceFire();
-  FastLED.setBrightness(h_Brightness);
-};
-
 class IceFireEffect{
     
   protected:
@@ -193,12 +187,6 @@ class IceFireEffect{
 
 };
 
-void MyFire(){
-  FastLED.clear();
-  fire.DrawFire();
-  FastLED.setBrightness(h_Brightness);
-};
-
 class PurpleRainEffect{
     
   protected:
@@ -280,10 +268,4 @@ class PurpleRainEffect{
         }
     }
 
-};
-
-void PurpleR(){
-  FastLED.clear();
-  rain.DrawPurpleRain();
-  FastLED.setBrightness(h_Brightness);
 };
