@@ -35,6 +35,8 @@
 #define NUM_LEDS           144         // number of LEDs - using 60 out of 60
 #define UF_LEDS            72          // number of LEDs for each half of Ukrain Flag
 #define LED_PIN            23
+#define CHIPSET            WS2812B     // specify the chipset of the led strip
+#define COLOR_ORDER        GRB         // specify the rgb order (not all chipsets have the same order)
 #define LED_BUILTIN        16          // builtin RGB LED1 Red pin
 
 CRGB h_LEDs[NUM_LEDS]   = {0};         // Frame buffer for FastLED
@@ -110,7 +112,7 @@ void setup() {
   while (!Serial){}
   Serial.println("ESP32 Startup");
 
-  FastLED.addLeds<WS2812B, LED_PIN, GRB>(h_LEDs, NUM_LEDS);               //  Add our LED strip to the FastLED library
+  FastLED.addLeds< CHIPSET, LED_PIN, COLOR_ORDER >(h_LEDs, NUM_LEDS);               //  Add our LED strip to the FastLED library
   FastLED.setBrightness(h_Brightness);
   set_max_power_indicator_LED(LED_BUILTIN);                               //  Light the builtin LED if we power throttle
   FastLED.setMaxPowerInMilliWatts(h_PowerLimit);                          //  Set the power limit, above which brightness will be throttled
