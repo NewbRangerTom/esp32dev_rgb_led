@@ -31,6 +31,10 @@
 #include <FastLED.h>
 #include "BluetoothSerial.h"
 
+// potentiometer
+#define POT_PIN            27
+int potVal = analogRead(POT_PIN);
+
 // For FastLED
 #define NUM_LEDS           144         // number of LEDs - using 60 out of 60
 #define UF_LEDS            72          // number of LEDs for each half of Ukrain Flag
@@ -41,7 +45,8 @@
 
 CRGB h_LEDs[NUM_LEDS]   = {0};         // Frame buffer for FastLED
 
-int h_Brightness         = 96;         //  brightness range 0 - 255  !!! CAUTION: setting to 255 could have negative effects if underpowered
+int h_Brightness = map(potVal, 0, 1023, 0, 255);
+// int h_Brightness         = 96;         //  brightness range 0 - 255  !!! CAUTION: setting to 255 could have negative effects if underpowered
 int h_PowerLimit         = 15000;      //  1000mW = 1W Power Limit   !!! SEE CAUTION IN HEADER BLOCK. I have started using a 5V-10A-50W power supply.
 
 uint8_t initialHue       = 0;
