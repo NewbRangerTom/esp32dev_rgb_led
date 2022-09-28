@@ -17,7 +17,7 @@
 #include <FastLED.h>
 #include "ledgfx.h"
 
-void DrawMarquee(){
+void DrawMarquee(int NUM_LEDS){
     
     static byte j = HUE_BLUE;
     j += 4;
@@ -39,7 +39,7 @@ void DrawMarquee(){
     delay(50);
 }
 
-void DrawMarqueeComparison(){
+void DrawMarqueeComparison(int NUM_LEDS){
 
   FastLED.clear();
   static float scroll = 0.0f;

@@ -29,21 +29,21 @@
 #include <Arduino.h>
 #define FASTLED_INTERNAL
 #include <FastLED.h>
-#include "BluetoothSerial.h"
+// #include "BluetoothSerial.h"
 
 // potentiometer
 #define POT_PIN            27
 int potVal = analogRead(POT_PIN);
 
 // For FastLED
-#define NUM_LEDS           144         // number of LEDs - using 60 out of 60
+#define CHIPSET            WS2812B     // specify the chipset of the led strip
+#define COLOR_ORDER        GRB         // specify the rgb order (not all chipsets have the same order) 
+#define STRIP1_LEDS        144         // number of LEDs on strip 1
 #define UF_LEDS            72          // number of LEDs for each half of Ukrain Flag
 #define LED_PIN            23
-#define CHIPSET            WS2812B     // specify the chipset of the led strip
-#define COLOR_ORDER        GRB         // specify the rgb order (not all chipsets have the same order)
 #define LED_BUILTIN        16          // builtin RGB LED1 Red pin
 
-CRGB h_LEDs[NUM_LEDS]   = {0};         // Frame buffer for FastLED
+CRGB h_LEDs[STRIP1_LEDS]   = {0};        // Frame buffer for FastLED
 
 int h_Brightness = map(potVal, 0, 1023, 0, 255);
 // int h_Brightness         = 96;         //  brightness range 0 - 255  !!! CAUTION: setting to 255 could have negative effects if underpowered
@@ -65,11 +65,11 @@ const uint8_t hueDensity = 4;
 
 // ----- Class Constructors
 
-BouncingBallEffect balls(NUM_LEDS, 8, 32, true);                  // Bouncing Ball Effect (length, count, fade, mirrored)
-IceFireEffect ice(NUM_LEDS, 15, 100, 3, 4, true, true);           // FireEffect, IceFireEffect, and PurpleRainEffect
-FireEffect fire(NUM_LEDS, 15, 100, 3, 4, true, true);             // reversed and bmirrored true/false combinations:
-PurpleRainEffect rain(NUM_LEDS, 15, 100, 3, 4, true, true);       // f-f = end -> 0 : t-f = 0 -> end : f-t = center -> out : t-t = ends -> center
-BluetoothSerial ESP_BT;
+BouncingBallEffect balls(STRIP1_LEDS, 8, 32, true);                  // Bouncing Ball Effect (length, count, fade, mirrored)
+IceFireEffect ice(STRIP1_LEDS, 15, 100, 3, 4, true, true);           // FireEffect, IceFireEffect, and PurpleRainEffect
+FireEffect fire(STRIP1_LEDS, 15, 100, 3, 4, true, true);             // reversed and bmirrored true/false combinations:
+PurpleRainEffect rain(STRIP1_LEDS, 15, 100, 3, 4, true, true);       // f-f = end -> 0 : t-f = 0 -> end : f-t = center -> out : t-t = ends -> center
+// BluetoothSerial ESP_BT;
 
 // --- User defined function(s) or function prototype(s) -------------------------
 
@@ -79,8 +79,8 @@ void Bounce(){
   FastLED.setBrightness(h_Brightness);
 };
 
-void Marquee(){
-  EVERY_N_MILLISECONDS(20){ DrawMarquee(); };
+void Marquee(int NUM_LEDS){
+  EVERY_N_MILLISECONDS(20){ DrawMarquee(NUM_LEDS); };
 };
 
 void MyFire(){
@@ -101,7 +101,7 @@ void PurpleR(){
   FastLED.setBrightness(h_Brightness);
 };
 
-void Rainbow(){
+void Rainbow(int NUM_LEDS){
   fill_rainbow(h_LEDs, NUM_LEDS, initialHue += hueDensity, deltaHue);
 };
 
@@ -113,11 +113,11 @@ void setup() {
   pinMode(LED_PIN, OUTPUT);
 
   Serial.begin(115200);
-  ESP_BT.begin("32db_LED_Light_Show");
+  // ESP_BT.begin("32db_LED_Light_Show");
   while (!Serial){}
   Serial.println("ESP32 Startup");
 
-  FastLED.addLeds< CHIPSET, LED_PIN, COLOR_ORDER >(h_LEDs, NUM_LEDS);               //  Add our LED strip to the FastLED library
+  FastLED.addLeds< CHIPSET, LED_PIN, COLOR_ORDER >(h_LEDs, STRIP1_LEDS);               //  Add our LED strip to the FastLED library
   FastLED.setBrightness(h_Brightness);
   set_max_power_indicator_LED(LED_BUILTIN);                               //  Light the builtin LED if we power throttle
   FastLED.setMaxPowerInMilliWatts(h_PowerLimit);                          //  Set the power limit, above which brightness will be throttled
@@ -135,24 +135,24 @@ void loop() {
     // uncomment the effect to use
 
     // clearLEDs();
-    // Marquee();                             // see annotations in marquee.h for options
-    // DrawComet();                           // 
-    // DrawCometGfx();                        //
-    // DrawComet3();                          //
+    // Marquee(STRIP1_LEDS);                             // see annotations in marquee.h for options
+    // DrawComet(STRIP1_LEDS);                           // 
+    // DrawCometGfx(STRIP1_LEDS);                        //
+    // DrawComet3(STRIP1_LEDS);                          //
     // Bounce();                              // Bouncing balls using BouncingBallEffect from bounce.h
     // DrawMarquee();                         // multi color scrolling marquee effect
-    // fillGreen();                           // DrawPixels color = CRGB::Green
+    // fillGreen(STRIP1_LEDS);                           // DrawPixels color = CRGB::Green
     // DrawTwinkle();                         // multi color twinkle effect
     // DrawPurpleTwinkle();                   // purple color palette twinkle effect
     // Plaid();                               // solid fill color = CRGB::Plaid
-    // Rainbow();                             //
+    // Rainbow(STRIP1_LEDS);                             //
     // firstLED();                            // light LED 0 CRGB::Red
     // lightFullStrip();                      // solid fill color = CRGB::Red
     // MyFire();                              // red palette fire effect
-    MyIceFire();                           // blue palette fire effect
+    // MyIceFire();                           // blue palette fire effect
     // PurpleR();                             // purple palette fire effect
     // UkrainFlag();                          // 
-
+  
     FastLED.setBrightness(h_Brightness);      // set brightness
     FastLED.delay(10);                        // Show and delay
 
