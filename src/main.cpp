@@ -20,6 +20,7 @@
 //                Apr-11-2022   TW-NewbRangerTom        Added PurpleRainEffect
 //                Apr-25-2022   TW-NewbRangerTom        Updated README.md
 //                                                      Added color_palette.txt with code to add to FastLED/colorutils
+//                Sep-28-2022   TW-NewbRangerTom        Cleaned up a few dependency issues in some of the functions.
 // 
 // !!! CAUTION:
 //    1. Some patterns require more power to run properly. Ensure you do not set power limit higher than power supply is rated.
@@ -32,29 +33,28 @@
 // #include "BluetoothSerial.h"
 
 // potentiometer
-#define POT_PIN            27
+#define POT_PIN             27
 int potVal = analogRead(POT_PIN);
 
 // For FastLED
-#define CHIPSET            WS2812B     // specify the chipset of the led strip
-#define COLOR_ORDER        GRB         // specify the rgb order (not all chipsets have the same order) 
-#define STRIP1_LEDS        144         // number of LEDs on strip 1
-#define UF_LEDS            72          // number of LEDs for each half of Ukrain Flag
-#define LED_PIN            23
-#define LED_BUILTIN        16          // builtin RGB LED1 Red pin
+#define CHIPSET             WS2812B     // specify the chipset of the led strip
+#define COLOR_ORDER         GRB         // specify the rgb order (not all chipsets have the same order) 
+#define STRIP1_LEDS         144         // number of LEDs on strip 1
+#define UF_LEDS             72          // number of LEDs for each half of Ukrain Flag
+#define LED_PIN             23
+#define LED_BUILTIN         16          // builtin RGB LED1 Red pin
 
-CRGB h_LEDs[STRIP1_LEDS]   = {0};        // Frame buffer for FastLED
+CRGB h_LEDs[STRIP1_LEDS] = {0};         // Frame buffer for FastLED
 
-int h_Brightness = map(potVal, 0, 1023, 0, 255);
-// int h_Brightness         = 96;         //  brightness range 0 - 255  !!! CAUTION: setting to 255 could have negative effects if underpowered
-int h_PowerLimit         = 15000;      //  1000mW = 1W Power Limit   !!! SEE CAUTION IN HEADER BLOCK. I have started using a 5V-10A-50W power supply.
+int h_Brightness         =  map(potVal, 0, 1023, 0, 255);
+int h_Brightness         =  96;         //  brightness range 0 - 255  !!! CAUTION: setting to 255 could have negative effects if underpowered
+int h_PowerLimit         =  15000;      //  1000mW = 1W Power Limit   !!! SEE CAUTION IN HEADER BLOCK. I have started using a 5V-10A-50W power supply.
 
-uint8_t initialHue       = 0;
-const uint8_t deltaHue   = 16;
-const uint8_t hueDensity = 4;
+uint8_t initialHue       =  0;
+const uint8_t deltaHue   =  16;
+const uint8_t hueDensity =  4;
 
 // LED effect headers - User defined headers
-
 #include "ledgfx.h"
 #include "bounce.h"
 #include "comet.h"      // *See caution # 1.
@@ -64,11 +64,10 @@ const uint8_t hueDensity = 4;
 #include "twinkle.h"    // *See caution # 1.
 
 // ----- Class Constructors
-
 BouncingBallEffect balls(STRIP1_LEDS, 8, 32, true);                  // Bouncing Ball Effect (length, count, fade, mirrored)
-IceFireEffect ice(STRIP1_LEDS, 15, 100, 3, 4, true, true);           // FireEffect, IceFireEffect, and PurpleRainEffect
-FireEffect fire(STRIP1_LEDS, 15, 100, 3, 4, true, true);             // reversed and bmirrored true/false combinations:
-PurpleRainEffect rain(STRIP1_LEDS, 15, 100, 3, 4, true, true);       // f-f = end -> 0 : t-f = 0 -> end : f-t = center -> out : t-t = ends -> center
+IceFireEffect      ice(STRIP1_LEDS, 15, 100, 3, 4, true, true);      // FireEffect, IceFireEffect, and PurpleRainEffect
+FireEffect         fire(STRIP1_LEDS, 15, 100, 3, 4, true, true);     // reversed and bmirrored true/false combinations:
+PurpleRainEffect   rain(STRIP1_LEDS, 15, 100, 3, 4, true, true);     // f-f = end -> 0 : t-f = 0 -> end : f-t = center -> out : t-t = ends -> center
 // BluetoothSerial ESP_BT;
 
 // --- User defined function(s) or function prototype(s) -------------------------
