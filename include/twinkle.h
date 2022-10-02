@@ -16,9 +16,15 @@
 #define FASTLED_INTERNAL
 #include <FastLED.h>
 
-#define TWINKLE_SPEED   50      //  value in milliseconds, best results under 100
-#define P_TWINKLE_SPEED 60      //  value in milliseconds, best results under 100
+// #define TWINKLE_SPEED   50      //  value in milliseconds, best results under 100
+// #define P_TWINKLE_SPEED 60      //  value in milliseconds, best results under 100
 #define NUM_COLORS      5       //  size of the TwinkleColors array
+
+enum speed{                     //  value in milliseconds, best results under 100
+    Slow = 30,
+    Medium = 50,
+    Fast = 70
+};
 
 static const CRGB TwinkleColors [NUM_COLORS] = 
 {
@@ -38,6 +44,15 @@ static const CRGB PurpleColors [NUM_COLORS] =
     CRGB::DarkViolet
 };
 
+static const CRGB OrangeColors [NUM_COLORS] =
+{
+    CRGB::OrangeRed,
+    CRGB::DarkOrange,
+    CRGB::Orange,
+    CRGB::MediumOrange,
+    CRGB::LightOrange
+};
+
 void DrawTwinkle(){
 
     static int passCount = 0;
@@ -51,7 +66,7 @@ void DrawTwinkle(){
     }
 
     h_LEDs[random(NUM_LEDS)] = TwinkleColors[random(NUM_COLORS)];
-    delay(TWINKLE_SPEED);
+    delay(Medium);
 }
 
 void DrawPurpleTwinkle(){
@@ -67,7 +82,23 @@ void DrawPurpleTwinkle(){
     }
 
     h_LEDs[random(NUM_LEDS)] = PurpleColors[random(NUM_COLORS)];
-    delay(TWINKLE_SPEED);
+    delay(Fast);
+}
+
+void DrawOrangeTwinkle(){
+
+    static int passCount = 0;
+    passCount++;
+
+    //  Every time passCount hits a quarter of the LED total, we reset the strip
+    if (passCount == NUM_LEDS / 3){
+
+        passCount = 0;
+        FastLED.clear(false);                                        //  Clear the strip, but don't push the bits out yet
+    }
+
+    h_LEDs[random(NUM_LEDS)] = OrangeColors[random(NUM_COLORS)];
+    delay(Medium);
 }
 
 void DrawTwinkleOg()

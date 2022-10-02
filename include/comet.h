@@ -19,7 +19,7 @@
 
 extern CRGB h_LEDs[];
 
-void DrawComet(int NUM_LEDS){
+void DrawComet(){
     
     // FastLED.clear(false);              // Uncomment this for cylon eye/knight rider effect
 
@@ -79,7 +79,7 @@ void DrawCometGfx(){
     delay(30);
 }
 
-void DrawComet3(int NUM_LEDS){
+void DrawComet3(){
     
     EVERY_N_MILLISECONDS(20){
         

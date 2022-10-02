@@ -29,8 +29,6 @@
 #define ARRAYSIZE(x) (sizeof(x)/sizeof(x[0]))
 #define TIMES_PER_SECOND(x) EVERY_N_MILLISECONDS(1000/x)
 
-int NUM_LEDS = STRIP1_LEDS;
-
 // Simple definitions of what direction we're talking about
 
 enum PixelOrder
@@ -79,7 +77,7 @@ static const int FanPixelsHorizontal[FAN_SIZE] =
 // Returns the sequential strip postion of a an LED on the fans based
 // on the index and direction specified, like 32nd most TopDown pixel.
 
-int GetFanPixelOrder(int iPos, int NUM_LEDS, PixelOrder order = Sequential)
+int GetFanPixelOrder(int iPos, PixelOrder order = Sequential)
 {
   while (iPos < 0)
     iPos += FAN_SIZE;
@@ -141,7 +139,7 @@ CRGB ColorFraction(CRGB colorIn, float fraction)
 // Just like DrawPixels but draws logically into a fan bank in a direction such as top down rather than
 // just straight sequential strip order
 
-void DrawFanPixels(float fPos, float count, int NUM_LEDS, CRGB color, PixelOrder order = Sequential, int iFan = 0)
+void DrawFanPixels(float fPos, float count, CRGB color, PixelOrder order = Sequential, int iFan = 0)
 {
   fPos += iFan * FAN_SIZE;
 
@@ -156,7 +154,7 @@ void DrawFanPixels(float fPos, float count, int NUM_LEDS, CRGB color, PixelOrder
 
   if (remaining > 0.0f)
   {
-    FastLED.leds()[GetFanPixelOrder(iPos++, NUM_LEDS, order)] += ColorFraction(color, amtFirstPixel);
+    FastLED.leds()[GetFanPixelOrder(iPos++, order)] += ColorFraction(color, amtFirstPixel);
     remaining -= amtFirstPixel;
   }
 
@@ -213,6 +211,6 @@ void DrawPixels(float fPos, float count, CRGB color)
   }
 }
 
-void fillGreen(int NUM_LEDS){
-  DrawPixels(h_LEDs[0], NUM_LEDS, CRGB::Green);
-}
+// void fillGreen(int NUM_LEDS){
+//   DrawPixels(h_LEDs[0], NUM_LEDS, CRGB::Green);
+// }
